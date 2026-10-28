@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="uz"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LC kontur — erkin elektromagnit tebranishlar laboratoriyasi</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Literata:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root{--bg:#eef2ec;--grid:#d3ddd0;--card:#fbfdf9;--ink:#15221c;--mute:#55655b;--acc:#1f4fd8;--line:#b9c7b8;--ok:#13795b;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121c1a;--grid:#1d2b28;--card:#192624;--ink:#e6efe8;--mute:#9db1a6;--acc:#7da2ff;--line:#324540;--ok:#52d3a6}}
+:root[data-theme="dark"]{--bg:#121c1a;--grid:#1d2b28;--card:#192624;--ink:#e6efe8;--mute:#9db1a6;--acc:#7da2ff;--line:#324540;--ok:#52d3a6}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--ink);font:17px/1.65 Literata,Georgia,serif}
+main{max-width:980px;margin:0 auto;padding:20px 16px 60px}
+h1,h2,h3,button,.lab{font-family:"Bricolage Grotesque",system-ui,sans-serif}
+h1{font-size:clamp(1.7rem,5vw,2.6rem);line-height:1.1;margin:.4em 0 .2em}h2{font-size:1.5rem;margin:1.4em 0 .3em}h3{margin:1em 0 .2em}
+p{max-width:70ch}.sub{color:var(--mute)}
+nav{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0}
+nav button{border:1.5px solid var(--line);background:var(--card);color:var(--ink);padding:9px 16px;border-radius:999px;font-size:1rem;cursor:pointer}
+nav button[aria-selected=true]{background:var(--acc);border-color:var(--acc);color:#fff}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+section{display:none}section.on{display:block}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.f{font:600 1.15rem "Literata",serif;text-align:center;padding:14px;margin:12px 0;background:var(--bg);border-left:4px solid var(--acc);border-radius:6px;overflow-x:auto}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+svg text{font-family:"Bricolage Grotesque",sans-serif}
+.cmp{cursor:pointer}.cmp:hover .hl,.cmp:focus .hl{stroke:var(--acc);stroke-width:3}
+.ctl{display:grid;grid-template-columns:auto 1fr auto;gap:8px 12px;align-items:center}
+.ctl input[type=range]{width:100%;accent-color:var(--acc)}.ctl output{min-width:5.5em;text-align:right;font-weight:700}
+select,.act{font:inherit;padding:6px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--card);color:var(--ink)}
+.act{cursor:pointer;background:var(--acc);color:#fff;border-color:var(--acc);font-family:"Bricolage Grotesque",sans-serif}.act.g{background:var(--card);color:var(--ink);border-color:var(--line)}
+canvas{width:100%;display:block;border-radius:10px;border:1.5px solid var(--line);background:var(--card)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.95rem}td,th{border-bottom:1px solid var(--line);padding:5px 8px;text-align:right}th{font-family:"Bricolage Grotesque",sans-serif}
+#info{min-height:4.5em;border-left:4px solid var(--acc);padding:6px 12px;background:var(--bg);border-radius:6px}
+details{margin:8px 0}summary{cursor:pointer;font-weight:600}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--bg);border:1px solid var(--line);font-size:.9rem}
+</style></head><body><main><h1>LC kontur<br>erkin elektromagnit tebranishlar laboratoriyasi</h1>
+<p class="sub">Kondensator va gʻaltakdan iborat tebranish konturini yigʻing, tebranishlar davrini oʻlchang, kritik qarshilikni toping va konturni 3D da koʻring.</p>
+<nav role="tablist"><button role="tab" data-t="th" aria-selected="true">Nazariya</button><button role="tab" data-t="lab" aria-selected="false">Laboratoriya</button><button role="tab" data-t="d3" aria-selected="false">3D kontur</button><button role="tab" data-t="q" aria-selected="false">Savollar</button></nav>
+
+<section id="th" class="on">
+<div class="card"><b class="lab">Tajriba maqsadi</b><ul><li>Elektr tebranish konturi bilan tanishish.</li><li>Kontur xususiy chastotasini aniqlash.</li><li>Zanjirda tok va kuchlanish oʻzgarishini tahlil qilish.</li></ul></div>
+<h2>Tebranish konturi</h2>
+<p>Kontur ketma-ket ulangan kondensator C va induktiv gʻaltak L dan iborat. Ideal LC konturda energiya yoʻqolmaydi, tebranish soʻnmaydi. Amalda gʻaltak simida aktiv qarshilik R bor, shuning uchun tebranish soʻnadi (soʻnuvchi garmonik ossillyator). Kondensator elektr maydon energiyasini, gʻaltak magnit maydon energiyasini saqlaydi va ular bir-biriga aylanib turadi.</p>
+<h2>Kirxgofning ikkinchi qonuni</h2>
+<p>Zanjirdagi barcha kuchlanishlar yigʻindisi nolga teng: ΣU<sub>i</sub> = 0 (I). Qarshilikli konturda:</p>
+<div class="f">U<sub>C</sub> + U<sub>R</sub> − U<sub>ind</sub> = Q/C + R·I + L·İ = 0 &nbsp;(II)</div>
+<p>Bu yerda C = Q/U<sub>C</sub>, U<sub>R</sub> = R·I (Om qonuni), U<sub>ind</sub> = −L·İ. Tenglamani L ga boʻlib, Q̇ = I deb olsak:</p>
+<div class="f">Ï + γ·İ + ω₀²·I = 0 &nbsp;(III), &nbsp; ω₀ = 1/√(LC), &nbsp; γ = R/L</div>
+<p>ω₀ — xususiy chastota, γ — konturning soʻnish koeffitsiyenti. Tenglama uch holga olib keladi:</p>
+<div class="cols">
+<div class="card"><h3>ω₀² − γ² &lt; 0</h3><p>Aperiodik (siklsiz) holat: tebranishsiz, eksponensial qaytish. Qarshilik katta.</p></div>
+<div class="card"><h3>ω₀² − γ² = 0</h3><p>Kritik soʻnish: tebranishsiz eng tez muvozanatga qaytish. Bunda <b>R<sub>kr</sub> = 2√(L/C)</b>.</p></div>
+<div class="card"><h3>ω₀² − γ² &gt; 0</h3><p>Soʻnuvchi tebranish: amplituda eksponensial kamayadi. Bu tajribada kuzatiladi.</p></div></div>
+<h2>Soʻnuvchi tebranishning yechimi</h2>
+<p>Kondensator boshlangʻich kuchlanish U₀ gacha zaryadlangan boʻlsa:</p>
+<div class="f">I(t) = I₀ · e<sup>−γt</sup> · sin(ωt) &nbsp;(IV), &nbsp; I₀ = U₀/(ωL), &nbsp; ω = √(ω₀² − γ²)</div>
+<div class="f">U(t) = U₀ · e<sup>−γt</sup> · cos(ωt) &nbsp;(V)</div>
+<p>IV dagi sinus va V dagi kosinus tok va kuchlanish orasida 90° faza siljishi borligini bildiradi: kondensator toʻla zaryadlanganda tok nol, kuchlanish nol boʻlganda tok maksimal. (V) formula γ ≪ ω₀ boʻlganda yaxshi yaqinlashish; laboratoriyada aniq yechim ishlatiladi.</p>
+<h2>Tomson formulasi</h2>
+<div class="f">T = 2π √(L·C) &nbsp;(VI) &nbsp;⇒&nbsp; L·C = Δt² / (4π²) &nbsp;(VII)</div>
+<p>Δt — kuchlanishning ikki qoʻshni maksimumi orasidagi vaqt (davr). Energiya: W = CU²/2 + LI²/2 ; soʻnmas konturda yigʻindi doimiy.</p>
+<h2>Asboblar va oʻlchash namunasi</h2>
+<p>Yuqori induktivli gʻaltak, 40 µF kondensator, 0…±15 V oʻzgarmas manba, analog multimetr, qoʻl sekundomeri, ulash simlari. Mualliflar tajribasi (U₀ = 3 V):</p>
+<div class="tw"><table><tr><th>Oʻlchash</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>Oʻrtacha</th></tr><tr><td>Δt, s</td><td>0,80</td><td>0,84</td><td>0,83</td><td>0,82</td><td>0,83</td><td>0,824</td></tr></table></div>
+<p>(VII) dan tajribada L·C = 0,0172 s², nazariyada 0,02 s². Farqning asosiy sababi: gʻaltak oʻzagi magnit singdiruvchanligi tokka bogʻliq, shuning uchun induktivlik tokka chiziqli emas.</p>
+<div class="card" style="border-color:#c0392b"><b>Texnika xavfsizligi:</b> tajribada faqat xavfsiz past kuchlanish: DC ≤ 60 V, AC ≤ 25 V. Kondensatorni ulashdan oldin uchlarini qisqa tutashtirib razryadlang. Gʻaltakni manbadan darhol ajratmang: kuchlanish sakrashi mumkin.</div>
+</section>
+
+<section id="lab">
+<div class="card" id="goal"><div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap"><svg viewBox="0 0 80 110" width="90" aria-hidden="true"><defs><filter id="bl"><feGaussianBlur stdDeviation="9"/></filter></defs><circle id="lg" cx="40" cy="42" r="34" fill="#ffd21a" opacity="0" filter="url(#bl)"/><path id="lb" d="M40 10a28 28 0 0 0-14 52v14h28V62A28 28 0 0 0 40 10Z" fill="#888" stroke="currentColor" stroke-width="3"/><path d="M28 84h24M30 94h20" stroke="currentColor" stroke-width="3"/></svg><div><b class="lab">Laboratoriya vazifalari</b><ul id="tl" style="margin:4px 0;padding-left:20px"></ul><div id="gm" class="pill"></div></div></div>
+<p style="margin:10px 0 0"><label>R<sub>kr</sub>, Ω: <input id="rk_in" type="number" step="1" style="width:7em" class="act g"></label> <button class="act" id="rk_ok">Tekshirish</button> <span id="gm2"></span></p></div>
+<div class="card"><div class="ctl">
+<label for="L">Induktivlik L</label><input id="L" type="range" min="50" max="600" step="5" value="430"><output id="Lo"></output>
+<label for="R">Qarshilik R</label><input id="R" type="range" min="0" max="8000" step="10" value="90"><output id="Ro"></output>
+<label for="U0">Boshlangʻich kuchlanish U₀</label><input id="U0" type="range" min="1" max="15" step="0.5" value="3"><output id="Uo"></output></div>
+<p style="margin:8px 0 0">C = 40 µF · ω₀ = <b id="w0"></b> rad/s · γ = <b id="gm_"></b> s⁻¹ · T = 2π√(LC) = <b id="Tt"></b> s · holat: <b id="cs"></b></p>
+<p style="margin:8px 0 0"><button class="act" id="go">▶ Kalitni gʻaltakka ulash (boshlash)</button> <button class="act g" id="dt">⏱ Δt oʻlchash</button> <button class="act g" id="cl">Jadvalni tozalash</button></p></div>
+<div class="cols"><div class="card"><b class="lab">Kontur sxemasi</b>
+<svg viewBox="0 0 420 240" width="100%" role="img" aria-label="LC kontur"><path d="M60 40H360V200H60" fill="none" stroke="currentColor" stroke-width="2.5"/>
+<rect id="pl1" x="30" y="80" width="60" height="12" fill="#e5744a" stroke="currentColor" stroke-width="2"/><rect id="pl2" x="30" y="148" width="60" height="12" fill="#3a7bff" stroke="currentColor" stroke-width="2"/><rect x="40" y="92" width="40" height="56" fill="var(--bg)" stroke="none"/><text x="96" y="124" fill="currentColor" font-size="14">C</text>
+<rect x="160" y="28" width="70" height="24" fill="var(--card)" stroke="currentColor" stroke-width="2.5"/><text x="195" y="22" text-anchor="middle" fill="currentColor" font-size="14">R</text>
+<rect x="340" y="80" width="40" height="80" fill="var(--card)" stroke="none"/><path d="M360 80q22 10 0 20t0 20 0 20 0 20" fill="none" stroke="currentColor" stroke-width="4"/><text x="392" y="124" fill="currentColor" font-size="14">L</text>
+<text x="210" y="205" fill="var(--acc)" font-weight="700" id="uv">U = 0 V</text><text x="210" y="228" fill="#d1432b" font-weight="700" id="iv">I = 0 mA</text></svg>
+<div class="lab" style="margin-top:6px">Energiya</div><div style="display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:center"><span>W<sub>C</sub></span><div style="background:var(--bg);border-radius:6px"><div id="bc" style="height:14px;background:var(--acc);border-radius:6px;width:0"></div></div><span>W<sub>L</sub></span><div style="background:var(--bg);border-radius:6px"><div id="bL" style="height:14px;background:#d1432b;border-radius:6px;width:0"></div></div></div></div>
+<div class="card"><canvas id="gr" width="900" height="520" aria-label="U(t) va I(t) grafigi"></canvas><p class="sub" style="margin:6px 0 0">Koʻk — kuchlanish U(t), qizil — tok I(t) (oʻz masshtabida), punktir — e<sup>−γt</sup> konvert.</p></div></div>
+<div class="card"><div class="tw"><table><thead><tr><th>№</th><th>Δt, s</th></tr></thead><tbody id="tb"></tbody></table></div><p id="res" class="sub"></p></div>
+</section>
+
+<section id="d3"><div class="card"><p id="s3" class="sub" style="margin:0 0 6px">Parametrlarni “Laboratoriya” boʻlimida oʻzgartiring va “boshlash” tugmasini bosing. Sariq nuqtalar — zaryad tashuvchilar (kondensator oraligʻidan siljish toki oʻtadi).</p><canvas id="c3" style="height:420px"></canvas><button class="act" id="go3">▶ Boshlash</button></div></section>
+
+<section id="q"><h2>Test: bilimingizni sinang</h2><div id="quiz"></div><h2>Oʻz-oʻzini sinash</h2>
+<details class="card"><summary>Nega soʻnish kuzatiladi?</summary><p>Gʻaltak simining aktiv qarshiligida energiya issiqlikka aylanadi, amplituda e<sup>−γt</sup> qonuni bilan kamayadi.</p></details>
+<details class="card"><summary>Nazariya va tajriba L·C qiymati nega farq qiladi?</summary><p>Gʻaltak oʻzagining magnit singdiruvchanligi tokka bogʻliq, shuning uchun L oʻzgarmas emas; qarshilik va vaqtni qoʻlda oʻlchash ham xato beradi.</p></details></section>
+
+<script>
+const $=id=>document.getElementById(id),C0=40e-6,fmt=(x,d=2)=>x.toFixed(d);
+let sim={t:0,on:false},meas=[],qok=0,rkok=false,Tw=1,Imax=1;
+function par(){const L=+$("L").value,R=+$("R").value,U0=+$("U0").value,w0=1/Math.sqrt(L*C0),g=R/L,d=w0*w0-g*g,Rk=2*Math.sqrt(L/C0);return{L,R,U0,w0,g,d,Rk,T:2*Math.PI/w0}}
+function f(t,p){const{L,U0,w0,g,d}=p,e=Math.exp(-g*t);if(d>1e-6){const w=Math.sqrt(d);return{u:U0*e*(Math.cos(w*t)+g/w*Math.sin(w*t)),i:U0/(w*L)*e*Math.sin(w*t)}}
+if(d>-1e-6)return{u:U0*e*(1+g*t),i:U0/L*t*e};const b=Math.sqrt(-d);return{u:U0*e*(Math.cosh(b*t)+g/b*Math.sinh(b*t)),i:U0/(b*L)*e*Math.sinh(b*t)}}
+function setup(){const p=par();$("Lo").textContent=p.L+" H";$("Ro").textContent=p.R+" Ω";$("Uo").textContent=p.U0+" V";$("w0").textContent=fmt(p.w0,2);$("gm_").textContent=fmt(p.g,3);$("Tt").textContent=fmt(p.T,3);
+$("cs").textContent=p.d>1e-6?"soʻnuvchi tebranish":p.d>-1e-6?"kritik soʻnish":"aperiodik (tebranishsiz)";
+if(p.d<-1e-6){Tw=5/(p.g-Math.sqrt(-p.d))}else Tw=Math.max(3*p.T,Math.min(12*p.T,4/p.g));
+Imax=1e-12;for(let k=0;k<400;k++)Imax=Math.max(Imax,Math.abs(f(k/400*Tw,p).i));return p}
+function draw(){const p=par(),cv=$("gr"),x=cv.getContext("2d"),cs=getComputedStyle(document.documentElement),ink=cs.getPropertyValue("--ink"),gr=cs.getPropertyValue("--line"),ac=cs.getPropertyValue("--acc"),W=cv.width,H=cv.height,X=t=>50+t/Tw*(W-70),Y=v=>H/2-v*(H/2-30);
+x.clearRect(0,0,W,H);x.lineWidth=1;x.strokeStyle=gr;for(let k=0;k<=10;k++){x.beginPath();x.moveTo(X(k/10*Tw),10);x.lineTo(X(k/10*Tw),H-10);x.stroke()}for(let k=-4;k<=4;k++){x.beginPath();x.moveTo(50,Y(k/4));x.lineTo(W-20,Y(k/4));x.stroke()}
+x.strokeStyle=ink;x.lineWidth=2;x.beginPath();x.moveTo(50,Y(0));x.lineTo(W-20,Y(0));x.stroke();x.fillStyle=ink;x.font="16px sans-serif";x.fillText("t, s",W-60,Y(0)-8);x.fillText("+"+fmt(p.U0,1)+" V",4,Y(1)+5);x.fillText("−"+fmt(p.U0,1)+" V",4,Y(-1)+5);
+if(p.d>0){x.setLineDash([6,5]);x.strokeStyle=gr;[1,-1].forEach(s=>{x.beginPath();for(let k=0;k<=200;k++){const t=k/200*Tw,v=s*Math.exp(-p.g*t);k?x.lineTo(X(t),Y(v)):x.moveTo(X(t),Y(v))}x.stroke()});x.setLineDash([])}
+[["u",ac,p.U0],["i","#d1432b",Imax]].forEach(([k,c,s])=>{x.strokeStyle=c;x.lineWidth=3;x.beginPath();for(let j=0;j<=600;j++){const t=j/600*Tw;j?x.lineTo(X(t),Y(f(t,p)[k]/s)):x.moveTo(X(t),Y(f(t,p)[k]/s))}x.stroke()});
+x.strokeStyle=ink;x.lineWidth=2;x.beginPath();x.moveTo(X(sim.t),10);x.lineTo(X(sim.t),H-10);x.stroke()}
+function readout(){const p=par(),v=f(sim.t,p);$("uv").textContent="U = "+fmt(v.u)+" V";$("iv").textContent="I = "+fmt(v.i*1000,1)+" mA";
+const W0=.5*C0*p.U0*p.U0;$("bc").style.width=Math.min(100,50*C0*v.u*v.u/W0*2)+"%";$("bL").style.width=Math.min(100,100*.5*p.L*v.i*v.i/W0)+"%";
+const a=Math.min(1,Math.abs(v.u)/p.U0);$("pl1").setAttribute("fill",v.u>=0?"#e5744a":"#3a7bff");$("pl2").setAttribute("fill",v.u>=0?"#3a7bff":"#e5744a");$("pl1").setAttribute("opacity",.25+.75*a);$("pl2").setAttribute("opacity",.25+.75*a);return v}
+function prog(){const p=par(),T=[[meas.length>=5,"Sekundomer bilan 5 ta Δt oʻlchang ("+Math.min(5,meas.length)+"/5)"],[rkok,"Kritik qarshilik R_kr ni hisoblab kiriting"],[qok>=3,"Testda 3 ta toʻgʻri javob bering ("+qok+"/4)"]];
+$("tl").innerHTML=T.map(t=>`<li>${t[0]?"✅":"⬜"} ${t[1]}</li>`).join("");const all=T.every(t=>t[0]);$("lb").setAttribute("fill",all?"#ffd21a":"#888");$("lg").setAttribute("opacity",all?.9:0);$("gm").textContent=all?"Laboratoriya bajarildi! Lampochka yondi 💡":"Barcha vazifalarni bajaring: lampochka yonadi."}
+function randn(){return(Math.random()+Math.random()+Math.random()-1.5)*.8}
+$("dt").onclick=()=>{const p=par();if(p.d<=1e-6){$("res").textContent="Δt oʻlchash uchun tebranish boʻlishi kerak: R ni kamaytiring.";return}const Td=2*Math.PI/Math.sqrt(p.d);meas.push(Math.round(Td*(1+.015*randn()*2)*100)/100);meas.length>5&&meas.shift();
+$("tb").innerHTML=meas.map((m,i)=>`<tr><td>${i+1}</td><td>${fmt(m)}</td></tr>`).join("");const av=meas.reduce((a,b)=>a+b,0)/meas.length,lc=av*av/(4*Math.PI*Math.PI),th=p.L*C0;
+$("res").innerHTML=`Δt oʻrtacha = ${fmt(av,3)} s. (VII): L·C = Δt²/4π² = ${lc.toFixed(5)} s². Nazariy L·C = ${th.toFixed(5)} s². Farq ${fmt(Math.abs(lc-th)/th*100,1)} %.`;prog()};
+$("cl").onclick=()=>{meas=[];$("tb").innerHTML="";$("res").textContent="";prog()};
+$("rk_ok").onclick=()=>{const p=par(),v=parseFloat($("rk_in").value);rkok=Math.abs(v-p.Rk)/p.Rk<=.05;$("gm2").textContent=rkok?"Toʻgʻri! R_kr = 2√(L/C).":"Yaqin emas. Formula: R_kr = 2√(L/C), C = 40 µF.";prog()};
+$("go").onclick=$("go3").onclick=()=>{sim.t=0;sim.on=true};
+["L","R","U0"].forEach(i=>$(i).oninput=()=>{setup();sim.t=0;sim.on=false;readout();draw()});
+const QZ=[["Xususiy chastota formulasi qaysi?",["ω₀ = 1/√(LC)","ω₀ = √(LC)","ω₀ = R/L"],0],["Kritik soʻnishda qarshilik nimaga teng?",["R = 2√(L/C)","R = L/C","R = 0"],0],["Soʻnuvchi tebranishda tok va kuchlanish orasidagi faza siljishi?",["90°","0°","180°"],0],["Tomson formulasi qaysi?",["T = 2π√(LC)","T = 2π/√(LC)","T = LC"],0]];
+QZ.forEach((q,i)=>{const d=document.createElement("div");d.className="card";d.innerHTML=`<b>${i+1}. ${q[0]}</b><br>`;q[1].map((t,j)=>[t,j]).sort(()=>Math.random()-.5).forEach(([t,j])=>{const b=document.createElement("button");b.className="act g";b.style.margin="6px 6px 0 0";b.textContent=t;b.onclick=()=>{if(d.dataset.done)return;d.dataset.done=1;if(j==q[2]){qok++;b.style.borderColor="var(--ok)";b.textContent="✅ "+t}else b.textContent="❌ "+t;prog()};d.appendChild(b)});$("quiz").appendChild(d)});
+let t3=0,tab="th";const nav=document.querySelectorAll("nav button");nav.forEach(b=>b.onclick=()=>{tab=b.dataset.t;nav.forEach(x=>x.setAttribute("aria-selected",x==b));document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==tab));if(tab=="d3")init3();if(tab=="lab"){setup();draw()}});
+/* 3D */
+let U3=()=>{};function init3(){if(t3){return}t3=1;const cv=$("c3");let R;try{R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true})}catch(e){$("s3").textContent="Brauzeringiz WebGL ni qoʻllamaydi.";return}
+const sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(45,2,.1,100);cam.position.set(0,1.5,12);sc.add(new THREE.AmbientLight(0xffffff,.8));const dl=new THREE.DirectionalLight(0xffffff,.8);dl.position.set(4,6,6);sc.add(dl);const G=new THREE.Group();sc.add(G);
+const bx=(w,h,d,x,y,c)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color:c,roughness:.5}));m.position.set(x,y,0);G.add(m);return m};
+bx(6,.07,.07,0,2,0x888888);bx(6,.07,.07,0,-2,0x888888);bx(.07,1.5,.07,-3,1.25,0x888888);bx(.07,1.5,.07,-3,-1.25,0x888888);bx(.07,1.5,.07,3,1.25,0x888888);bx(.07,1.5,.07,3,-1.25,0x888888);bx(1,.3,.4,0,2,0x8a6f4a);
+const P1=bx(2,.1,1.6,-3,.45,0xe5744a),P2=bx(2,.1,1.6,-3,-.45,0x3a7bff);
+const pts=[];for(let k=0;k<=140;k++){const a=k/140*Math.PI*2*7;pts.push(new THREE.Vector3(3+.8*Math.cos(a),-.75+1.5*k/140,.8*Math.sin(a)))}
+const coil=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),300,.07,8),new THREE.MeshStandardMaterial({color:0xb87333,metalness:.6,roughness:.4,emissive:0xffaa33,emissiveIntensity:0}));G.add(coil);
+const Bf=new THREE.Mesh(new THREE.SphereGeometry(.7,24,16),new THREE.MeshBasicMaterial({color:0x44ddff,transparent:true,opacity:0}));Bf.position.set(3,0,0);G.add(Bf);
+const N=40,car=[],cg=new THREE.SphereGeometry(.07,8,6),cm=new THREE.MeshBasicMaterial({color:0xffd21a});for(let k=0;k<N;k++){const m=new THREE.Mesh(cg,cm);G.add(m);car.push(m)}
+const pos=s=>{s=((s%1)+1)%1*16;if(s<4)return[-3+1.5*0+6*(s/4),-2+0,0].map((v,i)=>i==0?-3+6*(s/4):v);if(s<8)return[3,-2+4*((s-4)/4),0];if(s<12)return[3-6*((s-8)/4),2,0];return[-3,2-4*((s-12)/4),0]};
+let ry=-.4,rx=.2,dn=0,lx=0,ly=0,off=0;cv.style.touchAction="none";cv.onpointerdown=e=>{dn=1;lx=e.clientX;ly=e.clientY;cv.setPointerCapture(e.pointerId)};cv.onpointerup=()=>dn=0;cv.onpointermove=e=>{if(dn){ry+=(e.clientX-lx)*.01;rx+=(e.clientY-ly)*.01;lx=e.clientX;ly=e.clientY}};
+function size(){const w=cv.clientWidth,h=cv.clientHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}size();addEventListener("resize",size);
+let last=performance.now();function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;if(tab=="d3"){const p=par(),v=f(sim.t,p),a=Math.min(1,Math.abs(v.u)/p.U0),ai=Math.min(1,Math.abs(v.i)/Imax);
+P1.material.color.set(v.u>=0?0xe5744a:0x3a7bff);P2.material.color.set(v.u>=0?0x3a7bff:0xe5744a);P1.material.emissive.set(0x222222).multiplyScalar(a*3);P2.material.emissive.set(0x222222).multiplyScalar(a*3);
+coil.material.emissiveIntensity=ai;Bf.material.opacity=.55*ai;Bf.material.color.set(v.i>=0?0x44ddff:0xff66cc);off+=v.i/Imax*dt*.35;car.forEach((m,k)=>{const q=pos(k/N+off);m.position.set(q[0],q[1],.12)});
+G.rotation.y=ry;G.rotation.x=rx;if(cv.clientWidth!=R.domElement.width&&cv.clientWidth)size();R.render(sc,cam)}requestAnimationFrame(loop)}requestAnimationFrame(loop)}
+/* umumiy sim sikli */
+let lt=performance.now();(function tick(n){const d=(n-lt)/1000;lt=n;if(sim.on){sim.t+=d;if(sim.t>=Tw){sim.t=Tw;sim.on=false}readout();if(tab=="lab")draw()}requestAnimationFrame(tick)})(lt);
+setup();readout();prog();
+</script></main></body></html>
